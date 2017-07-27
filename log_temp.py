@@ -1,5 +1,7 @@
 import time
 import datetime
+
+# https://github.com/adafruit/Adafruit_Python_MCP9808
 import Adafruit_MCP9808.MCP9808 as MCP9808
 
 sensor = MCP9808.MCP9808()
