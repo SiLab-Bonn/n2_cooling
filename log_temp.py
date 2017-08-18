@@ -12,4 +12,4 @@ while True:
 	with open('temp.log', 'a') as outfile:
 		outfile.write(datetime.datetime.now().isoformat(' ') + ',	' + temp + '\n')
 	print datetime.datetime.now().isoformat(' ') + ' 	' + temp
-	time.sleep(30)
+	time.sleep(1)
