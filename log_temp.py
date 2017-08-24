@@ -25,12 +25,12 @@ def read_sensors(sensors, delay=1):
 
     # Append header to indentifz sensors by id
     with open('temp.log', 'a') as outfile:
-        s_str = '\t'.join([d.value() for d in sensors])
+        s_str = '\t'.join([str(d) for d in sensors])
         outfile.write("\t" + s_str)
 
     while True:
         temps = []
-        for sensor in sensors.items():
+        for sensor in sensors.values():
             temps.append(str(sensor.readTempC()))
         with open('temp.log', 'a') as outfile:
             outfile.write(datetime.datetime.now().isoformat(
