@@ -26,6 +26,7 @@ def read_sensors(sensors, delay=1):
     # Append header to indentifz sensors by id
     with open('temp.log', 'a') as outfile:
         s_str = '\t'.join([str(d) for d in sensors])
+        logging.info("Devices: %s", s_str)
         outfile.write("\t" + s_str)
 
     while True:
@@ -41,6 +42,7 @@ def read_sensors(sensors, delay=1):
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     addresses = [0x18, 0x19, 0x1a]
     sensors = get_sensors(addresses)
     read_sensors(sensors, delay=1)
