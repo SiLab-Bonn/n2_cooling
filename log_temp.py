@@ -22,10 +22,16 @@ def read_sensors(sensors, delay=1):
     """ Read the sensors and add to file.
     Delay readings in seconds
     """
+
+    # Append header to indentifz sensors by id
     with open('temp.log', 'a') as outfile:
-        s_str = [sensor.get_address() for sensor in sensors]
+        s_str = []
+        for sensor in sensors:
+            did = sensor._device.readU16BE(MCP9808.MCP9808_REG_DEVICE_ID)
+            s_str.append('{0:04X}'.format(did))
         s_str = '\t'.join(s_str)
         outfile.write("\t" + s_str)
+
     while True:
         temps = []
         for sensor in sensors:
