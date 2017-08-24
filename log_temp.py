@@ -7,12 +7,12 @@ import Adafruit_MCP9808.MCP9808 as MCP9808
 
 
 def get_sensors(adresses):
-    sensors = []
+    sensors = {}
     for address in addresses:
         try:
             sensor = MCP9808.MCP9808(address)
-            sensor.begin(sensor)
-            sensors.append()
+            sensor.begin()
+            sensors[address] = sensor
         except IOError:
             logging.warning("Device at address %d not available", address)
     return sensors
@@ -25,16 +25,12 @@ def read_sensors(sensors, delay=1):
 
     # Append header to indentifz sensors by id
     with open('temp.log', 'a') as outfile:
-        s_str = []
-        for sensor in sensors:
-            did = sensor._device.readU16BE(MCP9808.MCP9808_REG_DEVICE_ID)
-            s_str.append('{0:04X}'.format(did))
-        s_str = '\t'.join(s_str)
+        s_str = '\t'.join([d.value() for d in sensors])
         outfile.write("\t" + s_str)
 
     while True:
         temps = []
-        for sensor in sensors:
+        for sensor in sensors.items():
             temps.append(str(sensor.readTempC()))
         with open('temp.log', 'a') as outfile:
             outfile.write(datetime.datetime.now().isoformat(
