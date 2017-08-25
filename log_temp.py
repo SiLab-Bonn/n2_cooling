@@ -26,7 +26,7 @@ def read_sensors(sensors, delay=1):
     # Append header to indentify sensors by id
     with open('temp.log', 'a') as outfile:
         s_str = '\t'.join([str(d) for d in sensors])
-        logging.info("Devices: %s",hex(s_str))
+        logging.info("Devices: %s", hex(s_str))
         outfile.write("\t" + hex(s_str))
 
     while True:
