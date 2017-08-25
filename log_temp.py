@@ -23,11 +23,11 @@ def read_sensors(sensors, delay=1):
     Delay readings in seconds
     """
 
-    # Append header to indentifz sensors by id
+    # Append header to indentify sensors by id
     with open('temp.log', 'a') as outfile:
         s_str = '\t'.join([str(d) for d in sensors])
         logging.info("Devices: %s", s_str)
-        outfile.write("\t" + s_str)
+        outfile.write("\t" + hex(s_str))
 
     while True:
         temps = []
