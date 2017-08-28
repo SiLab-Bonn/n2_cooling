@@ -11,7 +11,7 @@ import json
 import logging
 
 # https://github.com/adafruit/Adafruit_Python_MCP9808
-# import Adafruit_MCP9808.MCP9808 as MCP9808
+import Adafruit_MCP9808.MCP9808 as MCP9808
 
 data_lock = threading.Lock()
 
@@ -199,5 +199,5 @@ class MyApp(App):
         self.reset_data()
 
 if __name__ == "__main__":
-    ADDRESSES = [0x18, 0x19, 0x1a]
-    start(MyApp, debug=False, port=8081, address='0.0.0.0', start_browser=True)
+    ADDRESSES = [0x19, 0x1a, 0x1c]
+    start(MyApp, debug=False, port=8081, address='131.220.165.89', start_browser=True)
