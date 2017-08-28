@@ -140,7 +140,7 @@ class MyApp(App):
 
         ctrl.append(self.history_box)
         ctrl.append(self.delay_box)
-        ctrl.append(self.temp_box)
+        ctrl.append(temp_box)
         ctrl.append(meas_buttons)
 
         # returning the root widget
@@ -204,8 +204,9 @@ class MyApp(App):
     def on_clear_pressed(self, widget, settings):
         self.reset_data()
 
-    def on_set_temp(self, widget, settings):
-        logging.info("Set temperature %d", settings)
+    def on_set_temp(self, widget, value, settings):
+        T = int(value)
+        logging.info("Set temperature %d", T)
 
 
 if __name__ == "__main__":
