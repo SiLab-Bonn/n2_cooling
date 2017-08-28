@@ -78,7 +78,7 @@ class MyApp(App):
         self.sensors = self.get_sensors(addresses=ADDRESSES)
         self.reset_data()
         super(MyApp, self).__init__(*args, html_head=html_head)
-        
+
     def get_sensors(self, addresses):
         sensors = {}
         for address in addresses:
@@ -95,42 +95,48 @@ class MyApp(App):
             self.data = []
             for sensor_id in self.sensors:
                 self.data.extend([{'x': [], 'y': [], 'type': 'scatter', 'mode':
-                                  'markers+lines', 'name': '%s' % str(hex(sensor_id))}])
-
+                                   'markers+lines', 'name': '%s' % str(hex(sensor_id))}])
 
     def main(self):
+        """ Interface is defined
+        """
         wid = gui.HBox()
         wid.style['position'] = 'absolute'
         ctrl = gui.VBox(width=400)
         ctrl.style['justify-content'] = 'space-around'
-        
+
         meas_buttons = gui.HBox(width=400)
 
         plotContainer = gui.Widget()
 
-        self.plt = PlotlyWidget(data=self.data, id='plot', sensor_ids=self.sensors.keys())
+        self.plt = PlotlyWidget(data=self.data, id='plot',
+                                sensor_ids=self.sensors.keys())
         plotContainer.append(self.plt)
 
-        self.history_box = LabelSpinBox(default_value=100, min=1, max=10000000,
-                                       step=1, label='History', labelWidth=200)
-        self.delay_box = LabelSpinBox(default_value=1, min=1, max=3600,
-                                       step=1, label='Delay [s]', labelWidth=200)
-        self.temp_box = LabelSpinBox(default_value=20, min=-30, max=20,
-                                       step=1, label='Temperature [C]', labelWidth=200)
-        
+        self.history_box = LabelSpinBox(default_value=100,
+                                        min=1, max=10000000,
+                                        step=1, label='History', labelWidth=200)
+        self.delay_box = LabelSpinBox(default_value=1,
+                                      min=1, max=3600,
+                                      step=1, label='Delay [s]', labelWidth=200)
+        temp_box = LabelSpinBox(default_value=20,
+                                     min=-30, max=20,
+                                     step=1, label='Temperature [C]', labelWidth=200)
+
         bt_meas = gui.Button('Measure temperature', width=200, height=30)
         bt_meas.style['margin'] = 'auto 50px'
         bt_meas.style['background-color'] = 'green'
-        
+
         bt_clear = gui.Button('Clear', width=200, height=30)
         meas_buttons.append(bt_meas)
         meas_buttons.append(bt_clear)
 
         self.started = False
 
-        # setting the listener for the onclick event of the button
+        # setting the listener for the interface widgets
         bt_meas.set_on_click_listener(self.on_meas_pressed, ctrl)
         bt_clear.set_on_click_listener(self.on_clear_pressed, ctrl)
+        temp_box.set_on_change_listener(self.on_set_temp, ctrl)
 
         ctrl.append(self.history_box)
         ctrl.append(self.delay_box)
@@ -144,8 +150,10 @@ class MyApp(App):
         return wid
 
     def run(self):
+        """ Run when Measue Temperatur button is clicked.
+        """
         while self.running:
-            with data_lock:
+            with data_lock:  # Aquire lock to access data
                 for idx, sensor in enumerate(self.sensors.values()):
                     x = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     self.data[idx]['x'].append(x)
@@ -175,6 +183,7 @@ class MyApp(App):
                     """ % {'x': xarray, 'y': yarray, 'indices': indices,
                            'history': self.history_box._spinbox.get_value()}
                 self.execute_javascript(cmd)
+                # Lock is release
             time.sleep(int(self.delay_box._spinbox.get_value()))
 
     def stop(self):
@@ -184,9 +193,6 @@ class MyApp(App):
     def on_meas_pressed(self, widget, settings):
         if not self.started:
             widget.style['background-color'] = 'red'
-            for idx in range(len(self.data)):
-                self.data[idx]['x'] = []
-                self.data[idx]['y'] = []
             self.running = True
             self.thread = threading.Thread(target=self.run)
             self.thread.start()
@@ -194,10 +200,16 @@ class MyApp(App):
             self.stop()
             widget.style['background-color'] = 'green'
         self.started = not self.started
-        
+
     def on_clear_pressed(self, widget, settings):
         self.reset_data()
 
+    def on_set_temp(self, widget, settings):
+        logging.info("Set temperature %d", settings)
+
+
 if __name__ == "__main__":
     ADDRESSES = [0x19, 0x1a, 0x1c]
-    start(MyApp, debug=False, port=8081, address='131.220.165.89', start_browser=True)
+    start(MyApp, debug=False, port=8081,
+          address='131.220.165.89',
+          start_browser=True)
