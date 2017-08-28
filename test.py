@@ -118,3 +118,61 @@ if __name__ == '__main__':
    #bh.set_setpoint(75)  # sets the setpoint
     print bh.read_measure()  # returns the current flow rate
     #print bh.read_counter_value()  # returns the current flow rate
+    
+    
+    '''
+    #Addressiny MCP9808 to RPI
+    import logging 
+    import math
+    
+    # Default I2C address for device. 
+    MCP9808_I2CADDR_DEFAULT        = 0x18 
+    
+ 
+    # Register addresses. 
+    MCP9808_REG_CONFIG             = 0x01 
+    MCP9808_REG_UPPER_TEMP         = 0x02 
+    MCP9808_REG_LOWER_TEMP         = 0x03 
+    MCP9808_REG_CRIT_TEMP          = 0x04 
+    MCP9808_REG_AMBIENT_TEMP       = 0x05 
+    MCP9808_REG_MANUF_ID           = 0x06 
+    MCP9808_REG_DEVICE_ID          = 0x07 
+ 
+    # Configuration register values. 
+    MCP9808_REG_CONFIG_SHUTDOWN    = 0x0100 
+    MCP9808_REG_CONFIG_CRITLOCKED  = 0x0080 
+    MCP9808_REG_CONFIG_WINLOCKED   = 0x0040 
+    MCP9808_REG_CONFIG_INTCLR      = 0x0020 
+    MCP9808_REG_CONFIG_ALERTSTAT   = 0x0010 
+    MCP9808_REG_CONFIG_ALERTCTRL   = 0x0008 
+    MCP9808_REG_CONFIG_ALERTSEL    = 0x0002 
+    MCP9808_REG_CONFIG_ALERTPOL    = 0x0002 
+    MCP9808_REG_CONFIG_ALERTMODE   = 0x0001 
+ 
+ def __init__(self, address=MCP9808_I2CADDR_DEFAULT, i2c=None, **kwargs): 
+          """Initialize MCP9808 device on the specified I2C address and bus number. 
+          Address defaults to 0x18 and bus number defaults to the appropriate bus 
+          for the hardware. 
+          """ 
+          self._logger = logging.getLogger('Adafruit_MCP9808.MCP9808') 
+          if i2c is None: 
+              import Adafruit_GPIO.I2C as I2C 
+              i2c = I2C 
+          self._device = i2c.get_i2c_device(address, **kwargs) 
+       
+       OR   
+          def __init__(self, address=MCP9808_I2CADDR_DEFAULT, busnum=I2C.get_default_bus()):  
+          def __init__(self, address=MCP9808_I2CADDR_DEFAULT, i2c=None, **kwargs):  
+              """Initialize MCP9808 device on the specified I2C address and bus number.  
+              Address defaults to 0x18 and bus number defaults to the appropriate bus  
+              for the hardware.  
+              """  
+              self._logger = logging.getLogger('Adafruit_MCP9808.MCP9808')  
+              self._device = I2C.Device(address, busnum)  
+              if i2c is None:  
+                  import Adafruit_GPIO.I2C as I2C  
+                  i2c = I2C  
+                  self._device = i2c.get_i2c_device(address, **kwargs)  
+                  '''
+
+
