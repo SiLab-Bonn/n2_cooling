@@ -154,10 +154,18 @@ class MyApp(App):
         """
         while self.running:
             with data_lock:  # Aquire lock to access data
+                temps = []
                 for idx, sensor in enumerate(self.sensors.values()):
                     x = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    y = sensor.readTempC()
                     self.data[idx]['x'].append(x)
-                    self.data[idx]['y'].append(sensor.readTempC())
+                    self.data[idx]['y'].append(y)
+                    temps.append(y)
+                with open('temp.log', 'a') as outfile:
+                    outfile.write(datetime.datetime.now().isoformat(
+                        ' ') + '\t' + '\t'.join(temps) + '\n')
+                    logging.info(datetime.datetime.now().isoformat(
+                        ' ') + '\t' + '%s', '\t'.join(temps))
                 if len(self.data[0]['x']) == 1:  # Can't extend an empty plot
                     cmd = ''
                     for idx in range(len(self.data)):
