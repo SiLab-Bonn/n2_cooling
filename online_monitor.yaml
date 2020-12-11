@@ -1,7 +1,7 @@
 converter :
     N2Cooling_Interpreter :
         kind : n2_cooling_converter
-        frontend : tcp://192.168.11.99:5000  # silab26
+        frontend : tcp://127.0.0.1:5000
         backend : tcp://127.0.0.1:5100
 
 receiver :
