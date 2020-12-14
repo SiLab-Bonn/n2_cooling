@@ -34,6 +34,7 @@ class N2Cooling(Receiver):
         layout = QtGui.QGridLayout()
         cw.setLayout(layout)
         self.avg_sensor_temp_label = QtGui.QLabel("Mean sensor temperature over last %d s\n" % self.avg_window)
+        self.dewpoint_label = QtGui.QLabel("Dew point:\n-- C")
         self.last_timestamp_label = QtGui.QLabel("Last timestamp:\n%s" % "No data yet")
         self.avg_setting = Qt.QSpinBox()
         self.avg_setting.setMinimum(1)
@@ -44,8 +45,9 @@ class N2Cooling(Receiver):
         self.reset_button = QtGui.QPushButton("Reset")
         layout.addWidget(self.avg_sensor_temp_label, 0, 0, 1, 1)
         layout.addWidget(self.avg_setting, 0, 1, 1, 1)
-        layout.addWidget(self.last_timestamp_label, 0, 2, 1, 1)
-        layout.addWidget(self.reset_button, 0, 3, 1, 1)
+        layout.addWidget(self.dewpoint_label, 0, 2, 1, 1)
+        layout.addWidget(self.last_timestamp_label, 0, 3, 1, 1)
+        layout.addWidget(self.reset_button, 0, 4, 1, 1)
         dock_status.addWidget(cw)
 
         # Connect widgets
@@ -118,9 +120,10 @@ class N2Cooling(Receiver):
 
         # set timestamp, plot delay and readour rate
         self.avg_sensor_temp_label.setText(
-            "Mean sensor temperature over last %d s:\n %.2f °C"
+            "Mean sensor temperature over last %d s:\n%.2f C"
             % (self.avg_window, data["stats"]["avg"]["temp_sensor_avg"])
         )
+        self.dewpoint_label.setText("Dew point:\n%.1f C" % data["stats"]["dp"])
         self.last_timestamp_label.setText(
             "Last timestamp:\n%s" % datetime.fromtimestamp(data["stats"]["last_timestamp"]).strftime("%x %X")
         )

@@ -27,6 +27,7 @@ class N2CoolingConverter(Transceiver):
     def interpret_data(self, data):
         data, meta_data = data[0][1]
         self.update_arrays(data, meta_data)
+        self.calculate_dewpoint(data)
 
         # Calculate recent average of curves (timespan can be defined in GUI)
         selection = np.isfinite(self.temp_arrays["temp_sensor"])
@@ -36,7 +37,7 @@ class N2CoolingConverter(Transceiver):
             "temp": self.temp_arrays,
             "humidity": self.humidity_arrays,
             "time": self.timestamps,
-            "stats": {"avg": self.averages, "last_timestamp": self.last_timestamp},
+            "stats": {"avg": self.averages, "last_timestamp": self.last_timestamp, "dp": self.dewpoint},
         }
 
         return [interpreted_data]
@@ -62,6 +63,7 @@ class N2CoolingConverter(Transceiver):
         self.averages = {
             "temp_sensor_avg": 0,
         }
+        self.dewpoint = None
 
         self.last_timestamp = 0
         self.avg_window = 180  # Amount of values to be taken into account for averaging
@@ -76,3 +78,11 @@ class N2CoolingConverter(Transceiver):
         self.timestamps = np.roll(self.timestamps, -1)
         self.timestamps[-1] = meta_data["timestamp"]
         self.last_timestamp = meta_data["timestamp"]
+        
+    def calculate_dewpoint(self, data):
+        b, c = 17.67, 243.5
+        temp = data[0][1]
+        rh = data[1][1]
+        gamma = np.log(rh / 100.) + b * temp / (c + temp)
+        self.dewpoint = c * gamma / (b - gamma)
+
