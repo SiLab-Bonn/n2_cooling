@@ -24,10 +24,10 @@ def send_data(socket, data, name="CoolingData"):
         pass
 
 
-def print_log(s,logfile="202008_DESY_temperature.log"):
+def print_log(logstring,logfile="202008_DESY_temperature.log"):
     with open(logfile,"a") as f:
-        f.write("%s %s\n"%(time.ctime(),s))
-    print(s)
+        f.write("%s %s\n"%(time.ctime(),logstring))
+    print(logstring)
 
 ##### For the valve: open/close max(open)=0xFFFFFF, min(close)=0
 
@@ -135,7 +135,7 @@ if __name__ == "__main__":
                         help="on: feedback on, open: open completely, close: close completely")
     parser.add_argument('--logfile', type=str, default="2020-12_DESY_temperature.log",
                         help="log file")
-    parser.add_argument('--monitor', type=str, default="", help="Online monitor address including port")
+    parser.add_argument('--monitor', type=str, default="tcp://127.0.0.1:5000", help="Online monitor address including port")
     args = parser.parse_args()
 
     cooling = Cooling(setpoint=setpoint, monitor=monitor)
