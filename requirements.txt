@@ -1,0 +1,6 @@
+basil-daq
+numpy
+online_monitor
+simple-pid
+tables
+zmq
