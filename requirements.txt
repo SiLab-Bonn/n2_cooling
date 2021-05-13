@@ -1,6 +1,7 @@
 basil-daq
 numpy
 online_monitor
+pyqt5
 simple-pid
 tables
-zmq
+pyzmq
