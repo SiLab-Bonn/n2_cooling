@@ -1,17 +1,31 @@
+from multiprocessing.sharedctypes import Value
 from PyQt5 import Qt
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 from pyqtgraph.dockarea import DockArea, Dock
-import pyqtgraph.ptime as ptime
-from datetime import datetime, date
+# import pyqtgraph.ptime as ptime
+from time import perf_counter
+
+from datetime import datetime
+import time
 
 from online_monitor.utils import utils
 from online_monitor.receiver.receiver import Receiver
+import n2_cooling_converter
+import numpy as np
+
+
+
 
 
 class TimeAxisItem(pg.AxisItem):
     def tickStrings(self, values, scale, spacing):
-        return [datetime.fromtimestamp(value).strftime("%x %X") for value in values]
+        print('VALUES DIE ANKOMMEN')
+        print(values)
+        return [datetime.fromtimestamp(value).strftime("%m/%d/%Y, %H:%M:%S") for value in values]
+            
+        
 
 
 class N2Cooling(Receiver):
@@ -29,20 +43,20 @@ class N2Cooling(Receiver):
         dock_area.addDock(dock_status, "top")
 
         # Status dock on top
-        cw = QtGui.QWidget()
+        cw = QtWidgets.QWidget()
         cw.setStyleSheet("QWidget {background-color:white}")
-        layout = QtGui.QGridLayout()
+        layout = QtWidgets.QGridLayout()
         cw.setLayout(layout)
-        self.avg_sensor_temp_label = QtGui.QLabel("Mean sensor temperature over last %d s\n" % self.avg_window)
-        self.dewpoint_label = QtGui.QLabel("Dew point:\n-- C")
-        self.last_timestamp_label = QtGui.QLabel("Last timestamp:\n%s" % "No data yet")
+        self.avg_sensor_temp_label = QtWidgets.QLabel("Mean sensor temperature over last %d s\n" % self.avg_window)
+        self.dewpoint_label = QtWidgets.QLabel("Dew point:\n-- C")
+        self.last_timestamp_label = QtWidgets.QLabel("Last timestamp:\n%s" % "No data yet")
         self.avg_setting = Qt.QSpinBox()
         self.avg_setting.setMinimum(1)
         self.avg_setting.setMaximum(3600)
         self.avg_setting.setValue(self.avg_window)
         self.avg_setting.setPrefix("Average over ")
         self.avg_setting.setSuffix(" s")
-        self.reset_button = QtGui.QPushButton("Reset")
+        self.reset_button = QtWidgets.QPushButton("Reset")
         layout.addWidget(self.avg_sensor_temp_label, 0, 0, 1, 1)
         layout.addWidget(self.avg_setting, 0, 1, 1, 1)
         layout.addWidget(self.dewpoint_label, 0, 2, 1, 1)
@@ -63,21 +77,30 @@ class N2Cooling(Receiver):
         date_axis_humid = TimeAxisItem(orientation="bottom")
         plot_temp = pg.PlotItem(axisItems={"bottom": date_axis_temp}, labels={"left": "Temperature / C"})
         plot_humidity = pg.PlotItem(axisItems={"bottom": date_axis_humid}, labels={"left": "rel. Humidity / %"})
+        plot_steering = pg.PlotItem(labels={"left": "rel. Valve steering  / %"})
+        plot_temp2 = pg.PlotItem(labels={"left": "Temperature / C"})
+        # plot_humidity = pg.PlotItem(labels={"left": "rel. Humidity / %"})
+        
 
         plot_humidity.setXLink(plot_temp)
 
         self.temp_sensor_curve = pg.PlotCurveItem(pen=pg.mkPen(color=(181, 0, 15), width=2))
         self.temp_box_curve = pg.PlotCurveItem(pen=pg.mkPen(color=(0, 181, 97), width=2))
         self.humid_sensor_curve = pg.PlotCurveItem(pen=pg.mkPen((181, 0, 15), width=2))
+        self.valve_steering_curve=pg.PlotCurveItem(pen=pg.mkPen(color=((0,0,255)), width=2))
+
 
         # add legend
         legend_temp = pg.LegendItem(offset=(50, 1))
         legend_temp.setParentItem(plot_temp)
         legend_temp.addItem(self.temp_sensor_curve, "Sensor temperature close to DUT")
         legend_temp.addItem(self.temp_box_curve, "Box temperature with dry ice")
+        
         legend_humid_sensor = pg.LegendItem(offset=(50, 1))
         legend_humid_sensor.setParentItem(plot_humidity)
         legend_humid_sensor.addItem(self.humid_sensor_curve, "Sensor humidity close to DUT")
+        # hat probleme gemacht
+        legend_temp.addItem(self.valve_steering_curve,"Valve steering")
 
         # add items to plots and customize plots viewboxes
         plot_temp.addItem(self.temp_sensor_curve)
@@ -88,6 +111,7 @@ class N2Cooling(Receiver):
         plot_temp.getAxis("bottom").setStyle(showValues=False)
 
         plot_humidity.addItem(self.humid_sensor_curve)
+        plot_humidity.addItem(self.valve_steering_curve)
         plot_humidity.vb.setBackgroundColor("#E6E5F4")
         plot_humidity.showGrid(x=True, y=True)
         plot_humidity.getAxis("left").setZValue(0)
@@ -102,6 +126,7 @@ class N2Cooling(Receiver):
             "temp_sensor": self.temp_sensor_curve,
             "temp_box": self.temp_box_curve,
             "humidity_sensor": self.humid_sensor_curve,
+            "valve_steering": self.valve_steering_curve
         }
         self.plot_delay = 0
 
@@ -111,9 +136,17 @@ class N2Cooling(Receiver):
 
     def handle_data_if_active(self, data):
         # look for TLU data in data stream
+        print("in handler")
         if "temp" in data:
             for key in data["temp"]:
+                print("laengen")
+                print(len(data['time']),'VS',len(data['temp'][key]))
+                print(len(data['time']),'VS',len(data['temp'][key]))
                 self.plots[key].setData(data["time"], data["temp"][key], autoDownsample=True)
+                print(data)
+                # print('VALUES')
+                # print(data['temp'][key])
+                # print(np.arange(len(data["temp"][key])))
         if "humidity" in data:
             for key in data["humidity"]:
                 self.plots[key].setData(data["time"], data["humidity"][key], autoDownsample=True)
@@ -127,8 +160,8 @@ class N2Cooling(Receiver):
         self.last_timestamp_label.setText(
             "Last timestamp:\n%s" % datetime.fromtimestamp(data["stats"]["last_timestamp"]).strftime("%x %X")
         )
-        now = ptime.time()
-
+        # now = ptime.time()
+        now=perf_counter()
     def _update_avg_window(self, value):
         self.avg_window = value
         self.send_command(str(value))

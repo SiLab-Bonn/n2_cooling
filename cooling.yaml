@@ -1,0 +1,42 @@
+transfer_layer:
+  - name : sensirion_serial
+    type : Serial
+    init : 
+        port : /dev/ttyUSB0
+        read_termination : ""
+        baudrate : 115200
+        timeout : 2.0
+
+  - name : bronkhorst_serial
+    type : Serial
+    init : 
+        port : /dev/ttyUSB1
+        read_termination : "\r\n"
+        baudrate : 38400
+        timeout : 2.0
+        
+    
+  
+  - name     : Serial
+    type     : Serial
+    init     :
+        port     : /dev/ttyUSB0
+        baudrate : 115200
+        timeout: 2
+        read_termination: "\r\n"  # Needs to be double-quoted string for YAML to parse this correctly
+        write_termination: "\n"   # Needs to be double-quoted string for YAML to parse this correctly
+
+hw_drivers:
+  - name      : bronkhorst
+    #type      : bronkhorst_elflow
+    interface : bronkhorst_serial
+    
+  - name      : NTCReadout
+    type      : arduino_ntc_readout
+    interface : Serial
+    init :
+      ntc_limits : [-55, 120]
+
+  - name      : sht85
+    type      : sht85
+    interface : Serial 
