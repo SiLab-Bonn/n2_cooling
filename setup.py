@@ -9,8 +9,9 @@ author = 'Christian Bespin, Toko Hirono'
 author_email = ''
 version = '0.1.0'
 
-# Requirements
-install_requires = ['basil-daq', 'numpy', 'online_monitor', 'simple-pid', 'tables', 'pyzmq']
+# Requirements for core functionality from requirements.txt
+with open('requirements.txt') as f:
+    install_requires = f.read().splitlines()
 
 setup(
     name='n2cooling',
