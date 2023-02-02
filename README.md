@@ -2,32 +2,17 @@
 Controller for the N2 Cooling System
 
 ## Getting started
-You need to install the following python packages:
+Clone this git repository and install the packages via:
 ```bash
-conda install numpy zeromq pyqtgraph pyqt
+pip install -e .
 ```
-as well as
+To set the path for the online-monitor go into the cloned git folder and use this command:
 ```bash
-pip install basil-daq online_monitor
+plugin_online_monitor n2_cooling/online_monitor
+```
+After you have set the hardware and flashed the Arduino nano with the firmware, open two terminals. Execute the cooling.py in one terminal. In the other start the online-monitor via:
+```bash
+start_online_monitor online_monitor.yaml
 ```
 
-## Set up hardware
-1. Connect all tubes as documented
-2. Close cooling box and flush with lots of N2
-3. Put small amount of dry ice in wooden box
-4. Adjust valves to allow for stable operation
-5. When system is stable put larger amounts of dry ice every few hours
-    - It is possible to run the system for at least six to eight hours with one load of dry ice, possibly more
 
-## Software
-Just run `python cooling.py`, optional arguments are:
-  - `setpoint` (default: `-20`) The target temperature for the feedback loop
-  - `valve` (default: `0`) Initial valve value (`0xFFFFFF` closed, `0x0` open)
-  - `feedback` (default: `on`) Activate feedback loop or just `open` or `close` valve
-  - `logfile` (default: current directory) Path and name for log file including extension
-  - `monitor` (default: `None`) Address and port for online monitor as `tcp://xxx.xxx.xxx.xxx:pppp`
-  
-  ## Tested valve settings
-  Target temperature | Hot valve (lpm) | Cold valve (lpm) | Main valve (lpm)
-  -------|---|----|----
-  -15 °C | 6 | 15 | > 25
