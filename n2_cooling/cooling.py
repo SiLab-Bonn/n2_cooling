@@ -4,6 +4,7 @@ import logging
 import numpy as np
 import tables as tb
 import struct
+import argparse
 
 from simple_pid import PID
 
@@ -261,8 +262,7 @@ class Cooling(object):
         self.PID_controller(float(user_input))
 
 
-if __name__ == "__main__":
-    import argparse
+def main():
     parser = argparse.ArgumentParser(
         usage="cooling.py --setpoint=X(C) --monitor='tcp://127.0.0.1:5000'",
         description='Temperature control',
@@ -278,4 +278,8 @@ if __name__ == "__main__":
 
     cooling = Cooling( monitor=args.monitor)
     cooling.run()
+
+
+if __name__ == "__main__":
+    main()
 

@@ -29,4 +29,5 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     platforms='any',
+    entry_points={'console_scripts': 'n2cooling = n2_cooling.cooling:main'},
 )
