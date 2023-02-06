@@ -1,7 +1,7 @@
 # N2_cooling
 For a more detailed manual for the cooling system see [wiki](https://github.com/SiLab-Bonn/n2_cooling/wiki/Manual-for-the-N2-cooling-system).
 
-## Flashing the Arduino Nano with the firmware
+## Library for the firmware
 First install the Arduino IDE and add the library [arduino-sht](https://www.arduinolibraries.info/libraries/arduino-sht). For that you can use the library manager in the IDE. Otherwise you can add the library from the firmware folder into your library folder in your sketchbook. The location of it can be found in the IDE under file/preferences.
 ## Quick start
 Clone this git repository and install the packages via:
