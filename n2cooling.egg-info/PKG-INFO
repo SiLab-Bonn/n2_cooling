@@ -1,0 +1,11 @@
+Metadata-Version: 2.1
+Name: n2cooling
+Version: 0.1.0
+Summary: Control software for N2 cooling system
+Home-page: https://github.com/SiLab-Bonn/n2_cooling
+Author: Christian Bespin, Toko Hirono
+Author-email: 
+Maintainer: Christian Bespin, Toko Hirono
+Maintainer-email: 
+Platform: any
+Requires-Python: >=3.7

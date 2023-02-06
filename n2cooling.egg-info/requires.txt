@@ -1,0 +1,7 @@
+basil-daq
+numpy
+online-monitor>=0.6
+simple-pid
+tables
+pyzmq
+pyserial

@@ -1,0 +1,2 @@
+[console_scripts]
+n2cooling = n2_cooling.cooling:main
