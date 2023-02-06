@@ -200,15 +200,15 @@ class Cooling(object):
                 # printing the measurement
                 measurement=self.get_temps()
                
-                print("VALVE: ", measurement[3], "%")
-                print('TEMP NTC: ', measurement[0], "°C")
-                print("TEMP SHT: ", measurement[1], "°C")
-                print("HUMID: ", measurement[2], "% \r\n")#, humids = self.get_temps()
+                logging.DEBUG("VALVE: ", measurement[3], "%")
+                logging.DEBUG('TEMP NTC: ', measurement[0], "°C")
+                logging.DEBUG("TEMP SHT: ", measurement[1], "°C")
+                logging.DEBUG("HUMID: ", measurement[2], "% \r\n")#, humids = self.get_temps()
 
                 ser_bronk.write(bytes(b':06030468416841\r\n'))
                 counter = ser_bronk.readline().decode("utf-8")
                 counter_float = struct.unpack('!f',bytes.fromhex(str(counter[11:])))[0]
-                print("Flow counter: ", counter_float)
+                logging.DEBUG("Flow counter: ", counter_float)
 
                 # monitoring flow (the value has to be then calculated see manual!)
                 ser_bronk.write(bytes(b':06800401210120\r\n'))
@@ -222,8 +222,8 @@ class Cooling(object):
 
                 # calculate flow as mentioned
                 flow_in_unit = flow_int / 32000 * cap
-                print("flow in ", unit_string," : ", round(flow_in_unit,2), '\n')
-                print('_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n')
+                logging.DEBUG("flow in ", unit_string," : ", round(flow_in_unit,2), '\n')
+                logging.DEBUG('_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n')
 
                 # send data to online monitor (first in the converter)
                 if self.socket:
