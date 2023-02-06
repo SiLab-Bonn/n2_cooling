@@ -8,7 +8,7 @@ Every analog pin is connected to read the voltage over a thermistor, therefore u
 temperature values can be recorded.
 */
 #include <Wire.h>
-#include "SHTSensor.h" 
+#include "arduino_sht-1.2.2/arduino-sht.h"
 
 
 //SHTSensor sht;
