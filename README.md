@@ -12,9 +12,13 @@ To set the path for the online-monitor go into the cloned git folder and use thi
 ```bash
 plugin_online_monitor n2_cooling/online_monitor
 ```
-After you have connected all components and flashed the Arduino nano with the firmware, open two terminals. To start the cooling use:
+After you have connected all components and flashed the Arduino nano with the firmware, open two terminals. To start the cooling with a flowmeter use:
 ```bash
 n2cooling
+```
+And to start the cooling without a flowmeter use:
+```bash
+n2cooling_wo
 ```
 Start the online-monitor via:
 ```bash
